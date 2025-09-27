@@ -4,7 +4,6 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'sarweshvaran/ci-cd-flask-app'
         SONARQUBE_ENV = 'sonar_server' // Must match Jenkins SonarQube server name
-        SONAR_TOKEN credential('sonar-key')
     }
 
     triggers {
