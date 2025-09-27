@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'sarweshvaran/ci-cd-flask-app'
-        SONARQUBE_ENV = 'SonarScanner' // Set this name in Jenkins global config
+        SONARQUBE_ENV = 'SonarScanner' // Name of your SonarQube server in Jenkins
     }
 
     triggers {
@@ -26,8 +26,9 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarScanner') {
-                    bat 'SonarScanner'
+                withSonarQubeEnv("${SONARQUBE_ENV}") {
+                    bat 'sonar-scanner'
+                }
             }
         }
 
@@ -41,22 +42,22 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE} ."
+                bat "docker build -t ${DOCKER_IMAGE} ."
             }
         }
 
         stage('Push to DockerHub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'Dockerhub-key', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh 'echo $PASS | docker login -u $USER --password-stdin'
-                    sh "docker push ${DOCKER_IMAGE}"
+                    bat 'echo %PASS% | docker login -u %USER% --password-stdin'
+                    bat "docker push ${DOCKER_IMAGE}"
                 }
             }
         }
 
         stage('Deploy Locally') {
             steps {
-                sh "docker run -d -p 5000:5000 ${DOCKER_IMAGE}"
+                bat "docker run -d -p 5000:5000 ${DOCKER_IMAGE}"
             }
         }
     }
