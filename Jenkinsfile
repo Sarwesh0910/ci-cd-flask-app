@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'sarweshvaran/ci-cd-flask-app'
-        SONARQUBE_ENV = 'sonar_server' // Name of your SonarQube server in Jenkins
+        SONARQUBE_ENV = 'sonar_server' // Must match Jenkins SonarQube server name
     }
 
     triggers {
@@ -27,7 +27,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv("${SONARQUBE_ENV}") {
-                    bat 'SonarScanner'
+                    bat 'sonar-scanner'
                 }
             }
         }
